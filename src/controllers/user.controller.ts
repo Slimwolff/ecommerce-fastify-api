@@ -5,5 +5,3 @@ export default function userController(req) {
 
     return { id: 1, name: "User Name Test"}
 }
-
-fastify.route()
