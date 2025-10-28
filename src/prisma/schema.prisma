@@ -16,7 +16,7 @@ datasource db {
 
 model User {
   id        Int      @id @default(autoincrement())
-  fist_name String?  @db.VarChar(255)
+  first_name String?  @db.VarChar(255)
   last_name String
   birthdate DateTime
   gender    String   @db.Char(1)
