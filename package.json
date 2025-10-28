@@ -8,6 +8,7 @@
     "start": "node index.js"
   },
   "devDependencies": {
+    "@types/node": "^24.9.1",
     "globals": "^16.4.0",
     "prisma": "^6.16.2",
     "ts-node": "^10.9.2",
@@ -31,6 +32,8 @@
   "homepage": "https://github.com/bulkzonee/ecom-api-fastify#readme",
   "dependencies": {
     "@prisma/client": "^6.16.2",
-    "fastify": "^5.6.1"
+    "fastify": "^5.6.1",
+    "fastify-zod": "^1.4.0",
+    "zod": "^4.1.12"
   }
 }
