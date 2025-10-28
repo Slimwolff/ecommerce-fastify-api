@@ -1,7 +1,16 @@
-import fastify from "fastify"
+import type { FastifyReply, FastifyRequest } from "fastify"
 
-export default function userController(req) {
+export function getUser(req: FastifyRequest, res: FastifyReply) {
+
     console.log("User Controller Reached!!")
 
-    return { id: 1, name: "User Name Test"}
+    
+    res.status(201).send({"hello": "test"})
+}
+
+export function createUser(req: FastifyRequest, res: FastifyReply) {
+    console.log(req.body)
+    res.send({method: "sucessfull"})
+    return 
+    
 }
