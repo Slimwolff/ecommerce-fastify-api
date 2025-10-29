@@ -1,0 +1,23 @@
+version: '3.8'  # Docker Compose file format version
+
+services:       # List of containers (services) to run
+  postgres:
+    image: postgres:16        # Official PostgreSQL 16 image from Docker Hub
+    container_name: db_postgres  # Name of the running container
+    restart: always           # Automatically restart if container stops
+    environment:              # Environment variables passed into the container
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: fastify-api
+    ports:                    # Map container port -> host port
+      - "5432:5432"           # Access via localhost:5432
+    volumes:                  # Persist database data outside the container
+      - pgdata:/var/lib/postgresql/data
+    networks:                 # Attach container to a virtual network
+      - apitest
+
+volumes:
+  pgdata:                     # Named volume to store persistent data
+
+networks:
+  apitest:                    # Private internal network for your containers
