@@ -1,0 +1,252 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  // output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  first_name String  @db.VarChar(255)
+  last_name String? @db.VarChar(255)
+  birthdate DateTime
+  gender    String   @db.Char(1)
+  address   Json?
+  email     String   @unique @db.VarChar(255)
+  password  String
+  salt      String
+  order     Order[]
+  whishlist whislist[]
+  created_at DateTime @db.Timestamp() @default(now())
+  updated_at DateTime @db.Timestamp() @updatedAt
+}
+
+enum Status {
+  PREPARING
+  SHIPPING
+  DELIVERED
+  REVIEWED
+}
+
+model Order {
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [user_id], references: [id])
+  user_id Int 
+  orderItems OrderItems[]
+  shipping_address String?
+  billing_address String?
+  total_price Decimal
+  payment_method String
+  transation String?
+  coupon Coupon? @relation(fields: [coupon_id], references: [name])
+  coupon_id String?
+  tracker_code String?
+  status Status @default(PREPARING)
+  createdAt DateTime @db.Timestamp() @default(now())
+  updatedAt DateTime @db.Timestamp() @updatedAt
+}
+
+
+
+model OrderItems {
+  id Int @id @default(autoincrement())
+  order Order @relation(fields: [orderId], references: [id])
+  orderId Int
+  product Product @relation(fields: [product_id], references: [id])
+  product_id Int 
+  quantity Int
+  unit_price Decimal @db.Decimal(10,2)
+  // subtotal Decimal @db.Decimal(10,2) //remove to change for computed field, doesn't need to save in database
+}
+
+model Product {
+  id Int @id @default(autoincrement())
+  product_variation Product_variations[]
+  orderItems OrderItems[]
+  // product_merchant_id product_merchant?
+  name String @db.VarChar(255)
+  description String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Product_variations {
+  id Int @id @default(autoincrement())
+  product_variations_options Product_variations_options[]
+  product Product @relation(fields: [product_id], references: [id])
+  product_id Int
+  variation_name String @db.VarChar(255)
+}
+
+model Product_variations_options {
+  id Int @id @default(autoincrement())
+  product_variation Product_variations @relation(fields: [products_variation_id], references: [id], onDelete: Cascade)
+  products_variation_id Int
+  product_stock Product_stock @relation(fields: [product_stock_id], references: [id])
+  product_stock_id Int @unique
+  whishlist whislist[]
+  name String
+  variationImg String
+  sku String
+}
+
+model Product_stock {
+  id Int @id @default(autoincrement())
+  product_variations_options Product_variations_options?
+  total_stock Int
+  unit_price Float
+  total_price Float
+}
+
+model whislist {
+  id Int @id @default(autoincrement())
+  product_variation_option Product_variations_options @relation(fields: [product_variation_option_id], references: [id])
+  product_variation_option_id Int
+  user User @relation(fields: [user_id], references: [id])
+  user_id Int
+}
+
+model Coupon {
+  name String @id @unique
+  description String?
+  amount Decimal
+  oneTimeUse Boolean
+  discountType DiscountType @default(percentage)
+  expiration_date DateTime 
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  order Order[]
+}
+
+enum DiscountType {
+  percentage
+  fixedValue
+}
+
+// model product_merchant {
+//   product_merchant_id String @id @default(nanoid(10)) @db.VarChar(50)
+//   product Product @relation(fields: [product_id], references: [id])
+//   product_id Int @unique
+//   title String @db.VarChar(150)
+//   structured_title String? @db.VarChar(150)
+//   description String @db.Text
+//   structured_description String? @db.Text
+//   link String
+//   image_link String
+//   additional_image_link String?
+//   virtual_model_link String?
+//   mobile_link String?
+
+//   // price and availability
+//   availability availability @default(in_stock)
+//   availability_date DateTime 
+//   cost_of_goods_sold String?
+//   expiration_date DateTime? @db.Timestamp()
+//   price String
+//   sale_price String?
+//   sale_price_effective_date String?
+//   unit_pricing_measure String?
+//   unit_pricing_base_measure String?
+//   installment Json?
+//   subscription_cost String?
+//   loyalty_program String?
+//   auto_pricing_min_price String?
+//   maximum_retail_price String?
+
+//   // Product Category
+//   google_product_category String?
+//   product_type String?
+
+//   // Product Identification
+//   brand String? @db.VarChar(70)
+//   gtin String?
+//   mpn String? @db.VarChar(70)
+//   identifier_exists yes_or_no @default(no)
+
+//   // detailed product description
+//   condition condition @default(new)
+//   adult yes_or_no @default(no)
+//   multipack Int @db.SmallInt
+//   is_bundle yes_or_no @default(no)
+//   certification String?
+//   energy_efficiency_class String?
+//   min_energy_efficiency_class String?
+//   max_energy_efficiency String?
+//   age_group age_group @default(adult)
+//   color String?
+//   gender String?
+//   material String?
+//   pattern String?
+//   size String?
+//   size_type String?
+//   size_system String?
+//   item_group_id String?
+//   product_length String?
+//   product_width String?
+//   product_height String?
+//   product_weight String?
+//   product_detail String?
+
+//   // Shopping Campaign and other settings
+//   ads_redirect String?
+//   custom_label String[] @db.VarChar(100)
+//   promotion_id String @db.VarChar(50)
+//   lifestyle_image_link String?
+
+//   //marketplaces
+//   external_seller_id String? @db.VarChar(50)
+
+
+//   // destination
+//   excluded_destination String?
+//   included_destination String?
+//   shopping_ads_excluded_country String?
+//   pause String?
+
+//   // freight - shipment
+//   shipping String?
+//   shipping_label String? @db.VarChar(100)
+//   shipping_weight String?
+//   shipping_length String?
+//   shipping_width String?
+//   shipping_height String?
+//   ships_from_country String?
+//   max_handling_time Int?
+//   min_handling_time Int?
+//   free_shipping_threshold String?
+// }
+
+// enum age_group {
+//   newborn
+//   infant
+//   toddler
+//   kids
+//   adult
+// }
+
+// enum condition {
+//   new
+//   refurbished
+//   used
+// }
+
+// enum yes_or_no {
+//   yes
+//   no
+// }
+
+// enum availability {
+//   in_stock
+//   out_of_stock
+//   preorder
+//   backorder
+// }
