@@ -2,6 +2,7 @@ import fastify from "fastify";
 import { fullFormats } from "ajv-formats/dist/formats.js";
 import {Ajv} from "ajv"
 import {userRoutes, productRoutes, orderRoutes} from "./src/routes/index.routes.ts";
+import authenticate from "./src/plugins/authenticate.ts"; 
 
 
 const app = fastify({
@@ -29,6 +30,7 @@ app.addHook("onRequest", (req, res, done) => {
 })
 
 // console.log($ref("createUserSchema"))
+app.register(authenticate)
 
 app.register(userRoutes, {prefix: "/v1"})
 app.register(productRoutes, {prefix: "/v1"})
