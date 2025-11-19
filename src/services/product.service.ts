@@ -93,7 +93,6 @@ async function getAllProducts(input: Record<string, any>) {
         return p
     } catch (e) {
         console.log(e);
-        
     }
     
 }

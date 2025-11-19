@@ -20,7 +20,9 @@ const CreateOrderSchema = t.Object({
 
 
 interface changeOrderInput {
-    where: Record<string, number>,
+    where: {
+        id: number
+    },
     data: Record<string, Status>;
 }
 
