@@ -2,6 +2,10 @@ import { type FastifyInstance, type FastifyReply, type FastifyRequest } from "fa
  import { createProduct, getProductByKey, updateProduct } from "../services/product.service.ts";
 import type { CreateProductInput, CreateProductSchema, UpdateProductInput } from "../models/product.schema.ts";
 
+let sessions = {
+    "1234": {}
+}
+
 async function getProductsHandler(
     req: FastifyRequest, 
     rep: FastifyReply
@@ -24,16 +28,15 @@ async function getProductsHandler(
     }
 }
 
-async function createProductHandler(req: FastifyRequest, rep: FastifyReply) {
 
+async function createProductHandler(req: FastifyRequest, rep: FastifyReply) {
 
     try {
         const body = await req.body
         
         const product = await createProduct(body)
 
-        console.log(product);
-        
+        console.log(product);       
 
         return rep.code(200).send(product)    
     } catch (e) {

@@ -1,5 +1,4 @@
 import type { FastifyReply, FastifyRequest } from "fastify"
-import { log } from "node:console"
 import { createUser } from "../services/user.service.ts"
 import type { CreateUserInput } from "../models/user.schema.ts"
 

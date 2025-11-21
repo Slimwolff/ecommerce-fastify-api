@@ -5,9 +5,10 @@ import { createProductHandler, getProductsHandler, updateProductHandler } from "
 
 export default async function productRoutes(fastify: FastifyInstance) {
 
-    fastify.get("/getProductByKey", getProductsHandler)
+    fastify.get("/getProductByKey/:id", getProductsHandler)
 
     fastify.post("/product", {
+        preHandler: ()=>{},
         schema: {
             body: CreateProductSchema,
             response: {

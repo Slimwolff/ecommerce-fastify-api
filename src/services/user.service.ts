@@ -1,4 +1,3 @@
-import { Prisma } from "@prisma/client";
 import { prisma } from "../../prisma/prisma.ts";
 import type { CreateUserInput } from "../models/user.schema.ts";
 import { hashPassword } from "../utils/hash.ts";
