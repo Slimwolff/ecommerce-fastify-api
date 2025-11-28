@@ -1,8 +1,11 @@
 import fastify from "fastify";
 import { fullFormats } from "ajv-formats/dist/formats.js";
 import {Ajv} from "ajv"
-import {userRoutes, productRoutes, orderRoutes} from "./src/routes/index.routes.ts";
+// import {userRoutes, productRoutes, orderRoutes} from "./src/routes/index.routes.ts";
+
+import indexRoutes from "./src/routes/index.routes.ts";
 import authenticate from "./src/plugins/authenticate.ts"; 
+import db from "./src/plugins/db.ts";
 
 
 const app = fastify({
@@ -26,15 +29,19 @@ app.setValidatorCompiler(({schema})=>{
 
 app.addHook("onRequest", (req, res, done) => {
     console.log("hook onRequest triggered")
+    console.log(`url: ${req.url}`);
+    
     done()
 })
 
+await app.register(db) // this need to run first to ensure correct dependecy injection of Prisma
+
 // console.log($ref("createUserSchema"))
 app.register(authenticate)
-
-app.register(userRoutes, {prefix: "/v1"})
-app.register(productRoutes, {prefix: "/v1"})
-app.register(orderRoutes, {prefix: "/v1/order/"})
+app.register(indexRoutes)
+// app.register(userRoutes, {prefix: "/v1", })
+// app.register(productRoutes, {prefix: "/v1"})
+// app.register(orderRoutes, {prefix: "/v1/order/"})
 
 
 

@@ -34,7 +34,7 @@ async function createProductHandler(req: FastifyRequest, rep: FastifyReply) {
     try {
         const body = await req.body
         
-        const product = await createProduct(body)
+        const product = await createProduct(body, )
 
         console.log(product);       
 

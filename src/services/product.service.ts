@@ -1,15 +1,16 @@
+import { FastifyInstance } from "fastify";
 import { prisma } from "../../prisma/prisma.ts"
 import { UpdateProductSchema, type CreateProductInput } from "../models/product.schema.ts";
 
 
 // produtos tem varias relações 
 //tem que criar todas as relações 
-async function createProduct(input: CreateProductInput) {
+async function createProduct(input: CreateProductInput, fastify: FastifyInstance) {
 
 
     try {
         // cria o produto para poder vincular o id nas outras tabelas
-        const p = await prisma.product.create({
+        const p = await fastify.prisma.product.create({
             data: input,
             include: {
                 product_variation: {
