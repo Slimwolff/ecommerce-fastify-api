@@ -1,7 +1,7 @@
 import fastify from "fastify";
 import { fullFormats } from "ajv-formats/dist/formats.js";
 import {Ajv} from "ajv"
-// import {userRoutes, productRoutes, orderRoutes} from "./src/routes/index.routes.ts";
+import {userRoutes, productRoutes, orderRoutes} from "./src/routes/index.routes.ts";
 
 import indexRoutes from "./src/routes/index.routes.ts";
 import authenticate from "./src/plugins/authenticate.ts"; 
@@ -38,9 +38,9 @@ await app.register(db) // this need to run first to ensure correct dependecy inj
 
 // console.log($ref("createUserSchema"))
 app.register(authenticate)
-app.register(indexRoutes)
-// app.register(userRoutes, {prefix: "/v1", })
-// app.register(productRoutes, {prefix: "/v1"})
+// app.register(indexRoutes)
+app.register(userRoutes, {prefix: "/v1", })
+app.register(productRoutes, {prefix: "/v1"})
 // app.register(orderRoutes, {prefix: "/v1/order/"})
 
 
@@ -51,5 +51,7 @@ app.listen({port:3000}, (err) => {
     }
 
     console.log("application ready!")
+    console.log(app.printRoutes());
+    
     
 })

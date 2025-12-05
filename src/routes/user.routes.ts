@@ -10,30 +10,33 @@ declare module 'fastify' {
     }
 }
 
-const userRoutes:FastifyPluginAsync = (fastify: FastifyInstance) => {
+const userRoutes:FastifyPluginAsync = async (fastify: FastifyInstance) => {
 
     if (!fastify.prisma) {
         throw new Error("Please ensure prisma plugin has started first!")
     }
+
+    console.log(`log from userRoutes -> prefix: ${fastify.prefix}`);
+    
 
     const userService = new UserServiceImpl(fastify.prisma)
 
     fastify.decorate("userService", userService)
 
     fastify.route({
-        method: 'GET',
-        url: '/user/',
-        handler: async function(req, rep) {
+    method: 'GET',
+    url: '/user:id',
+    handler: async function(req, rep) {
 
-            const user = await this.userService.getUserById(req.query.id)
+            const user = await this.userService.getUserById(parseInt(req.query.id))
 
             return rep.code(201).send(user)
         }
-    })
+    }),
 
     fastify.route({
         method: 'POST',
-        url: '/v1/user/',
+        url: '/user',
         schema: {
             body: CreateUserInputSchema,
             response: {
@@ -47,10 +50,8 @@ const userRoutes:FastifyPluginAsync = (fastify: FastifyInstance) => {
             return rep.code(201).send(newUser)
         }
     })
+    
+    
 }
-
-export default fp(userRoutes)
-
-// const userRoutesPlugin = fp(userRoutes)
-
-// export{ userRoutesPlugin }
+// exportado sem o fastify plugin - pq causa que ele registra rotas direto no root sem prefixo se for como plugin
+export default userRoutes
